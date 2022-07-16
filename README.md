@@ -6,7 +6,7 @@ https://user-images.githubusercontent.com/39158228/154243727-aea0ea2d-bedf-46cf-
 ## Install / Update
 Linux Only:
 ```sh
-sudo sh -c "$(curl -fsSL https://github.com/pmh-only/spoti2wall/releases/download/v1/install.sh)"
+sudo sh -c "$(curl -fsSL https://github.com/pmh-only/spoti2wall/releases/download/v1-coldfix/install.sh)"
 ```
 
 ## Usage
