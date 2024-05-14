@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"os"
 	"os/signal"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/pmh-only/spoti2wall/rest"
+	"github.com/pmh-only/spoti2wall/state"
 	"github.com/pmh-only/spoti2wall/utils"
 )
 
@@ -17,17 +19,44 @@ var darkFlag int
 var reauthFlag bool
 
 func init() {
-	flag.IntVar(&blurFlag, "blur", 0, "Blur image with blur option")
-	flag.IntVar(&darkFlag, "dark", 0, "Dark image with darker option")
+	flag.IntVar(&blurFlag, "b", 0, "Blur image with blur option")
+	flag.IntVar(&darkFlag, "d", 0, "Dark image with darker option")
 	flag.BoolVar(&reauthFlag, "reauth", false, "Reauth with spotify")
 	flag.Parse()
 
 	rest.RefreshToken = utils.ReadRefreshToken()
+
+	state.InitConfig()
+}
+
+func getClientId() string {
+	return state.GlobalConfig.Section("").Key("client_id").String()
 }
 
 func main() {
 	color.Magenta("🎵 spoti2wall started...")
 
+	if getClientId() == "" {
+		color.Green("📝 Enter client id [default]: ")
+		scanner := bufio.NewScanner(os.Stdin)
+		_ = scanner.Scan()
+		if scanner.Text() == "" {
+			utils.SaveClientId(rest.ClientId)
+		} else {
+			utils.SaveClientId(scanner.Text())
+		}
+
+		color.Green("📝 Enter client secret [default]: ")
+		_ = scanner.Scan()
+		if scanner.Text() == "" {
+			utils.SaveClientSecret(rest.ClientSecret)
+		} else {
+			utils.SaveClientSecret(scanner.Text())
+		}
+
+		// reinit for refresh values
+		state.InitConfig()
+	}
 	nitrogenExist := utils.CheckWallpaperCliExist()
 
 	if !nitrogenExist {
