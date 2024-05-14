@@ -18,7 +18,7 @@ func redirect2Auth(w http.ResponseWriter, r *http.Request) {
 		Path:   "authorize",
 		RawQuery: url.Values{
 			"response_type": {"code"},
-			"client_id":     {clientId},
+			"client_id":     {},
 			"scope":         {"user-read-playback-state"},
 			"redirect_uri":  {redirectUri},
 		}.Encode(),
@@ -55,7 +55,7 @@ func StartAuthServer() {
 
 	go func() {
 		color.Green("🔑 Please open this url in your browser:")
-		color.Green("https://localhost:%d/authorize", serverPort)
+		color.Green("http://localhost:%d/authorize", serverPort)
 
 		utils.OpenBrowser(
 			fmt.Sprintf("http://localhost:%d/authorize", serverPort))

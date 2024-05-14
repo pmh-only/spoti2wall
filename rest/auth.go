@@ -9,22 +9,40 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/pmh-only/spoti2wall/state"
 )
 
-const clientId = "cec309f90be94ee6bc2f90f95c9882e0"
-const clientSecret = "be14629cf6e6477d85fd61443538e4d8"
+const ClientId = "d963921426b6417188c8a66e17c1bc97"
+const ClientSecret = "f40b3c7258ce485690c279a38d2db9d7"
+
 const authorizeUri = "http://localhost:49823/authorize"
 const redirectUri = "http://localhost:49823/callback"
 
 var AccessToken = ""
 var RefreshToken = ""
 
-var credential = base64.StdEncoding.EncodeToString(
-	[]byte(clientId + ":" + clientSecret))
-
 type authResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+func getClientId() string {
+	clientID := state.GlobalConfig.Section("").Key("client_id").String()
+	if clientID == "" {
+		return ClientId
+	} else {
+		return clientID
+	}
+}
+
+func getClientSecret() string {
+	secret := state.GlobalConfig.Section("").Key("client_secret").String()
+	if secret == "" {
+		return ClientSecret
+	} else {
+		return secret
+	}
 }
 
 func KeepRefreshToken() {
@@ -52,6 +70,8 @@ func getAuthToken(code string) (access, refresh string) {
 		authUrl.String(),
 		strings.NewReader(formData.Encode()))
 
+	var credential = base64.StdEncoding.EncodeToString(
+		[]byte(getClientId() + ":" + getClientSecret()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", credential))
 
@@ -86,6 +106,8 @@ func RefreshAccessToken(refresh string) string {
 		authUrl.String(),
 		strings.NewReader(formData.Encode()))
 
+	var credential = base64.StdEncoding.EncodeToString(
+		[]byte(getClientId() + ":" + getClientSecret()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", credential))
 
