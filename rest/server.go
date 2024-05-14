@@ -20,7 +20,7 @@ func redirect2Auth(w http.ResponseWriter, r *http.Request) {
 			"response_type": {"code"},
 			"client_id":     {},
 			"scope":         {"user-read-playback-state"},
-			"redirect_uri":  {redirectUri},
+			"redirect_uri":  {fmt.Sprintf("http://localhost:%d/callback", serverPort)},
 		}.Encode(),
 	}
 

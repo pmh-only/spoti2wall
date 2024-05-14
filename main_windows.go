@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/pmh-only/spoti2wall/config"
 	"github.com/pmh-only/spoti2wall/rest"
-	"github.com/pmh-only/spoti2wall/state"
 	"github.com/pmh-only/spoti2wall/utils"
 )
 
@@ -27,11 +27,11 @@ func init() {
 
 	rest.RefreshToken = utils.ReadRefreshToken()
 
-	state.InitConfig()
+	config.InitConfig()
 }
 
 func getClientId() string {
-	return state.GlobalConfig.Section("").Key("client_id").String()
+	return config.GlobalConfig.Section("").Key("client_id").String()
 }
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 		}
 
 		// reinit for refresh values
-		state.InitConfig()
+		config.InitConfig()
 	}
 
 	wallpaperManager := utils.NewWallpaperManager(defaultWallpaperPath)
