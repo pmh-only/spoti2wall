@@ -10,14 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pmh-only/spoti2wall/state"
+	"github.com/pmh-only/spoti2wall/config"
 )
 
 const ClientId = "d963921426b6417188c8a66e17c1bc97"
 const ClientSecret = "f40b3c7258ce485690c279a38d2db9d7"
-
-const authorizeUri = "http://localhost:49823/authorize"
-const redirectUri = "http://localhost:49823/callback"
 
 var AccessToken = ""
 var RefreshToken = ""
@@ -25,24 +22,6 @@ var RefreshToken = ""
 type authResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
-}
-
-func getClientId() string {
-	clientID := state.GlobalConfig.Section("").Key("client_id").String()
-	if clientID == "" {
-		return ClientId
-	} else {
-		return clientID
-	}
-}
-
-func getClientSecret() string {
-	secret := state.GlobalConfig.Section("").Key("client_secret").String()
-	if secret == "" {
-		return ClientSecret
-	} else {
-		return secret
-	}
 }
 
 func KeepRefreshToken() {
@@ -61,7 +40,7 @@ func getAuthToken(code string) (access, refresh string) {
 
 	formData := url.Values{
 		"code":         {code},
-		"redirect_uri": {redirectUri},
+		"redirect_uri": {fmt.Sprintf("http://localhost:%d/callback", serverPort)},
 		"grant_type":   {"authorization_code"},
 	}
 
@@ -71,7 +50,7 @@ func getAuthToken(code string) (access, refresh string) {
 		strings.NewReader(formData.Encode()))
 
 	var credential = base64.StdEncoding.EncodeToString(
-		[]byte(getClientId() + ":" + getClientSecret()))
+		[]byte(config.GetClientId("") + ":" + config.GetClientSecret("")))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", credential))
 
@@ -107,7 +86,7 @@ func RefreshAccessToken(refresh string) string {
 		strings.NewReader(formData.Encode()))
 
 	var credential = base64.StdEncoding.EncodeToString(
-		[]byte(getClientId() + ":" + getClientSecret()))
+		[]byte(config.GetClientId("") + ":" + config.GetClientSecret("")))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", credential))
 
