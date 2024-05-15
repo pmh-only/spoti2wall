@@ -8,7 +8,11 @@ import (
 var GlobalConfig *ini.File
 
 func InitConfig() {
-	GlobalConfig, _ = ini.Load(utils.GetConfigPath())
+	var err error
+	GlobalConfig, err = ini.Load(utils.GetConfigPath())
+	if err != nil {
+		GlobalConfig = ini.Empty()
+	}
 }
 
 func GetClientId(defaultValue string) string {
