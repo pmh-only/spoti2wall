@@ -20,14 +20,14 @@ var darkFlag int
 var reauthFlag bool
 
 func init() {
+	config.InitConfig()
+
 	flag.IntVar(&blurFlag, "b", 0, "Blur image with blur option")
 	flag.IntVar(&darkFlag, "d", 0, "Dark image with darker option")
 	flag.BoolVar(&reauthFlag, "reauth", false, "Reauth with spotify")
 	flag.Parse()
 
 	rest.RefreshToken = utils.ReadRefreshToken()
-
-	config.InitConfig()
 }
 
 func getClientId() string {
