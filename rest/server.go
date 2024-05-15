@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/fatih/color"
+	"github.com/pmh-only/spoti2wall/config"
 	"github.com/pmh-only/spoti2wall/utils"
 )
 
@@ -18,7 +19,7 @@ func redirect2Auth(w http.ResponseWriter, r *http.Request) {
 		Path:   "authorize",
 		RawQuery: url.Values{
 			"response_type": {"code"},
-			"client_id":     {},
+			"client_id":     {config.GetClientId(ClientId)},
 			"scope":         {"user-read-playback-state"},
 			"redirect_uri":  {fmt.Sprintf("http://localhost:%d/callback", serverPort)},
 		}.Encode(),
