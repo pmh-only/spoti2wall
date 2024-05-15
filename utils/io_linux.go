@@ -55,8 +55,16 @@ func DownloadImage(url string, path string) error {
 
 func GetConfigPath() string {
 	configDir, _ := os.UserConfigDir()
+	configPath := configDir + "/spoti2wall.ini"
+
 	os.MkdirAll(configDir, os.ModePerm)
-	return configDir + "/spoti2wall.ini"
+	_, err := os.Stat(configPath)
+
+	if os.IsNotExist(err) {
+		os.Create(configPath)
+	}
+
+	return configPath
 }
 
 func SaveRefreshToken(token string) {
